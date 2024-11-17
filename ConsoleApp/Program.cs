@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleApp;
 
@@ -7,16 +8,14 @@ public static class Program
     public static void Main()
     {
         // Composition Root
-        IReader reader = new ConsoleReader();
-        IWriter writer = new ConsoleWriter();
-        // var writer = new FileWriter("output.txt");
-        var copyProcess = new CopyProcess(reader, writer);
-
+        using var serviceProvider = new ServiceCollection()
+            .AddTransient<IReader, ConsoleReader>()
+            .AddTransient<IWriter, ConsoleWriter>()
+            // .AddTransient<IWriter, FileWriter>()
+            .AddTransient<CopyProcess>()
+            .BuildServiceProvider();
+        
+        var copyProcess = serviceProvider.GetRequiredService<CopyProcess>();
         copyProcess.Execute();
-
-        if (writer is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
     }
 }
