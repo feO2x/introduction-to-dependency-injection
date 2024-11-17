@@ -1,0 +1,19 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "C# (.NET) Dev Container",
+	"image": "mcr.microsoft.com/devcontainers/dotnet:9.0-noble",
+	"remoteUser": "vscode",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			},
+			"extensions": [
+				"ms-dotnettools.csdevkit",
+				"vscode-icons-team.vscode-icons",
+				"redhat.vscode-xml"
+			]
+		}
+	}
+}
