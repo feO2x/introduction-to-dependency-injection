@@ -40,11 +40,16 @@ public static class Program
 {
     public static void Main()
     {
-        Copy();
+        Copy(Target.File);
     }
 
-    private static void Copy()
+    private static void Copy(Target target)
     {
+        if (target == Target.File)
+        {
+            File.Initialize("output.txt");
+        }
+
         while (true)
         {
             var readKey = Console.ReadKey(intercept: true);
@@ -53,7 +58,22 @@ public static class Program
                 break;
             }
 
-            Console.Write(readKey.KeyChar);
+            switch (target)
+            {
+                case Target.File:
+                    File.Write(readKey.KeyChar);
+                    break;
+                case Target.Console:
+                    Console.Write(readKey.KeyChar);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(target));
+            }
+        }
+
+        if (target == Target.File)
+        {
+            File.Dispose();
         }
     }
 }
