@@ -1,79 +1,22 @@
 ﻿using System;
-using System.IO;
-
 
 namespace ConsoleApp;
-
-public static class File
-{
-    private static StreamWriter? streamWriter;
-
-    public static void Initialize(string path)
-    {
-        streamWriter = new StreamWriter(new FileStream(path, FileMode.Create, FileAccess.Write));
-    }
-
-    public static void Write(char value)
-    {
-        if (streamWriter is null)
-        {
-            throw new InvalidOperationException("File stream is not initialized.");
-        }
-
-        streamWriter.Write(value);
-    }
-    
-    public static void Dispose()
-    {
-        streamWriter?.Close();
-        streamWriter = null;
-    }
-}
-
-public enum Target
-{
-    Console,
-    File
-}
 
 public static class Program
 {
     public static void Main()
     {
-        Copy(Target.File);
-    }
+        // Composition Root
+        IReader reader = new ConsoleReader();
+        IWriter writer = new ConsoleWriter();
+        // var writer = new FileWriter("output.txt");
+        var copyProcess = new CopyProcess(reader, writer);
 
-    private static void Copy(Target target)
-    {
-        if (target == Target.File)
+        copyProcess.Execute();
+
+        if (writer is IDisposable disposable)
         {
-            File.Initialize("output.txt");
-        }
-
-        while (true)
-        {
-            var readKey = Console.ReadKey(intercept: true);
-            if (readKey.Key == ConsoleKey.Escape)
-            {
-                break;
-            }
-
-            switch (target)
-            {
-                case Target.File:
-                    File.Write(readKey.KeyChar);
-                    break;
-                case Target.Console:
-                    Console.Write(readKey.KeyChar);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(target));
-            }
-        }
-
-        if (target == Target.File)
-        {
-            File.Dispose();
+            disposable.Dispose();
         }
     }
 }
